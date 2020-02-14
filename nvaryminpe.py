@@ -15,7 +15,7 @@ r.gROOT.SetBatch(True)
 coll="TriggerPadTagger" #other options: "TriggerPadUpSimHits", "TriggerPadDownSimHits"
 
 ## intialize contain to read target input file
-cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p001.root")
+cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_20_noise_0p001.root")
 cont.setup()
 
 stacks = [] # to keep hist in memory 
@@ -32,7 +32,7 @@ for min_pe in np.arange(1.0,11.0,1.0):
     hist = r.TH2F("confusion_hist",coll+";True Electrons;Pred Electrons",8,-0.5,7.5,8,-0.5,7.5)
  
     for i in range(cont.tin.GetEntries()):
-        if i>100: break
+        #if i>100: break
         ## initialize container
         cont.getEvent(i)
 
@@ -91,44 +91,8 @@ for i in range(5,1,-1):
             if y==1: under_prediction.append(Dict[i][x][y])
             if y==2: over_prediction.append(Dict[i][x][y])
 
-    print "overprediction", over_prediction
-    print "efficiency", efficiency
-    print "\n"
-    maximum  =  Dict[2][0][2]
-    minimum = Dict[5][9][2]
-    print "mas,min", maximum, minimum
-    print "\n"
-    gr = r.TGraph( 10, Minpes, over_prediction)
-    stacks.append(gr)
-    gr.SetLineColor( i+4 )
-    gr.SetLineWidth( 4 )
-    gr.SetMarkerStyle( 21 )
-    gr.SetTitle( 'n = '+ str(i-1))
-    #gr.GetXaxis().SetNdivisions(505)
-    gr.GetXaxis().SetTitle( 'Min_Pe' )
-    gr.GetYaxis().SetTitle( 'Over Prediction Rate' )
-    #gr.GetYaxis().SetRangeUser(minimum, maximum)
-    #gr.GetXaxis().SetLimits(0.0001,11)
-    gr.GetXaxis().SetLabelSize(0.03)
-    gr.GetYaxis().SetLabelSize(0.03)
-    if i-1 == 4: gr.Draw( 'ALP' )
-    else : gr.Draw('LP')
-
-#c1.SetLogy()
-#c1.SetLogx()
-c1.BuildLegend(0.65,0.75,0.95,0.9,"Number of True Electrons (n):")
-c1.SaveAs("a..mincc_response20_MinPevsOver.png")
-
-for i in range(5,1,-1):
-    efficiency, under_prediction, over_prediction = array("d"),array("d"),array("d")
-    for x in np. arange(0,10,1):
-        for y in np.arange(0,3,1):
-            if y==0: efficiency.append(Dict[i][x][y])
-            if y==1: under_prediction.append(Dict[i][x][y])
-            if y==2: over_prediction.append(Dict[i][x][y])
-
     
-    gr = r.TGraph( 10, Minpes, under_prediction)
+    gr = r.TGraph( 10, Minpes, efficiency)
     stacks.append(gr)
     gr.SetLineColor( i+4 )
     gr.SetLineWidth( 4 )
@@ -136,18 +100,17 @@ for i in range(5,1,-1):
     gr.SetTitle( 'n = '+ str(i-1))
     #gr.GetXaxis().SetNdivisions(505)
     gr.GetXaxis().SetTitle( 'Min_Pe' )
-    gr.GetYaxis().SetTitle( 'Over Prediction Rate' )
-    gr.GetYaxis().SetRangeUser(0, 1)
+    gr.GetYaxis().SetTitle( 'Efficiency Rate' )
+    gr.GetYaxis().SetRangeUser(0, 1.3)
     #gr.GetXaxis().SetLimits(0.0001,11)
     gr.GetXaxis().SetLabelSize(0.03)
     gr.GetYaxis().SetLabelSize(0.03)
     if i-1 == 4: gr.Draw( 'ALP' )
     else : gr.Draw('LP')
 
-#c1.SetLogy()
-#c1.SetLogx()
-c1.BuildLegend(0.65,0.75,0.95,0.9,"Number of True Electrons (n):")
-c1.SaveAs("a..mincc_response20_MinPevsOver.png")
+
+c1.BuildLegend(0.65,0.85,0.95,1.0,"Number of True Electrons (n):")
+c1.SaveAs("mincc_response20_MinPevseff.png")
 
 
 for i in range(5,1,-1):
