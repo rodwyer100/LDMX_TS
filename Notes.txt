@@ -6,3 +6,8 @@
 3) Why values do not add up in SVM histogram?
 
 4) Learn about Random forest parameters.
+
+5) Create efficiency/underprediction/overprediction plots for new response values?
+So far, efficiency does not seem to improve much for min of count clusters
+
+6) check why overprediction curves are weird
