@@ -69,18 +69,14 @@ for min_pe in np.arange(1.0,11.0,1.0):
         #print "event_rate", event_rate
         Dict.setdefault(x,[]).append(event_rate)
 #NOTE: All the dict keywords are +1 the number of true electrons
-# Initializing all the canvas
+#NOTE: 
 
+
+# Initializing all the canvas
 c1 = r.TCanvas( 'c1', 'c1', 1000, 1000)
 c1.SetGrid()
 
-print "1:", Dict[2]
-print "\n"
-print "2",Dict[3]
-print "\n"
-print "3",Dict[4]
-print "\n"
-print "4", Dict[5]
+print "(Eff, Under, Over) values for 10 different min pe and for n=1", Dict[2]
 print "\n"
 
 for i in range(5,1,-1):
@@ -109,8 +105,38 @@ for i in range(5,1,-1):
     else : gr.Draw('LP')
 
 
-c1.BuildLegend(0.65,0.85,0.95,1.0,"Number of True Electrons (n):")
+c1.BuildLegend(0.65,0.75,0.95,0.90,"Number of True Electrons (n):")
 c1.SaveAs("mincc_response20_MinPevseff.png")
+
+for i in range(5,1,-1):
+    efficiency, under_prediction, over_prediction = array("d"),array("d"),array("d")
+    for x in np. arange(0,10,1):
+        for y in np.arange(0,3,1):
+            if y==0: efficiency.append(Dict[i][x][y])
+            if y==1: under_prediction.append(Dict[i][x][y])
+            if y==2: over_prediction.append(Dict[i][x][y])
+
+
+    gr = r.TGraph( 10, Minpes, under_prediction)
+    stacks.append(gr)
+    gr.SetLineColor( i+4 )
+    gr.SetLineWidth( 4 )
+    gr.SetMarkerStyle( 21 )
+    gr.SetTitle( 'n = '+ str(i-1))
+    #gr.GetXaxis().SetNdivisions(505)
+    gr.GetXaxis().SetTitle( 'Min_Pe' )
+    gr.GetYaxis().SetTitle( 'Under Prediction Rate' )
+    gr.GetYaxis().SetRangeUser(0, 1.3)
+    #gr.GetXaxis().SetLimits(0.0001,11)
+    gr.GetXaxis().SetLabelSize(0.03)
+    gr.GetYaxis().SetLabelSize(0.03)
+    if i-1 == 4: gr.Draw( 'ALP' )
+    else : gr.Draw('LP')
+
+
+c1.BuildLegend(0.65,0.75,0.95,0.90,"Number of True Electrons (n):")
+c1.SaveAs("mincc_response20_MinPevsunder.png")
+
 
 
 for i in range(5,1,-1):
@@ -147,7 +173,7 @@ for i in range(5,1,-1):
 #c1.SetLogy()
 #c1.SetLogx()
 c1.BuildLegend(0.65,0.75,0.95,0.9,"Number of True Electrons (n):")
-c1.SaveAs("a..mincc_response20_MinPevsOver.png")
+#c1.SaveAs("mincc_response20_MinPevsOver.png")
 
 
 for i in range(5,1,-1):
@@ -181,5 +207,5 @@ for i in range(5,1,-1):
 #c1.SetLogx()
 #c1.SetLogy()
 c1.BuildLegend(0.2,0.75,0.5,0.9,"Number of True Electrons (n):")
-c1.SaveAs("a..miincc_response20_OvervsEff.png")
+#c1.SaveAs("miincc_response20_OvervsEff.png")
 
