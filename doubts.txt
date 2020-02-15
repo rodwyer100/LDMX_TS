@@ -1,7 +1,8 @@
 1) what is the difference between simhits and digi files?
+- Simhit files contains info on energy deposited in the bar information 
+- Digi files contains info on photo electrons
+2) Check secondaries for events for upstream true_num > downstream true_num:
+- Done: not much correlation
+3) Why values do not add up in SVM histogram?
 
-
-Ideas:
-1) Create a hist for various c and g parameters
-2) print out secondaries for the events things went wrong
-3) put the arrays in a two 
+4) Learn about Random forest parameters.
