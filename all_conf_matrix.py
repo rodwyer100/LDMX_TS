@@ -1,3 +1,6 @@
+# to compute all confusion matrices in  one run. The canvas will be split into 10. One for each noise value
+
+
 import ROOT as r
 from ldmx_container import *
 import pandas as pd
