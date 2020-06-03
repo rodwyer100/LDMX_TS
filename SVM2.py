@@ -1,3 +1,6 @@
+# basic support vector machine algorithm; using sklearn modules
+
+
 import ROOT as r
 from ldmx_container import *
 import pandas as pd
