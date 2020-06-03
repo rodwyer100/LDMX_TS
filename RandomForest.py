@@ -31,8 +31,7 @@ cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_
 cont.setup()
 n=0
 for i in range(cont.tin.GetEntries()):
-    if i > 10000: break 
-    
+    if i > 100: break    
     ## initialize container
     cont.getEvent(i)
     ## get true number of electrons

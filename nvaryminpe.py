@@ -50,9 +50,9 @@ for min_pe in np.arange(1.0,11.0,1.0):
         ## fill histograms 
 
         #hist.Fill(true_num,count_hits)
-        #hist.Fill(true_num, min(count_hits,count_hits_up))
+        hist.Fill(true_num, min(count_hits,count_hits_up))
         #hist.Fill(true_num,count_clusters)
-        hist.Fill(true_num, min(count_clusters,count_clusters_up))
+        #hist.Fill(true_num, min(count_clusters,count_clusters_up))
         
     for x in range(2,6): # four blocks in each histogram; x and y represent the histogram block number
         values = [0]*3 #three variable list [eff,under,over] 
@@ -69,7 +69,7 @@ for min_pe in np.arange(1.0,11.0,1.0):
         #print "event_rate", event_rate
         Dict.setdefault(x,[]).append(event_rate)
 #NOTE: All the dict keywords are +1 the number of true electrons
-#NOTE: 
+
 
 
 # Initializing all the canvas
@@ -106,7 +106,7 @@ for i in range(5,1,-1):
 
 
 c1.BuildLegend(0.65,0.75,0.95,0.90,"Number of True Electrons (n):")
-c1.SaveAs("mincc_response20_MinPevseff.png")
+c1.SaveAs("minhits_response20_MinPevseff.png")
 
 for i in range(5,1,-1):
     efficiency, under_prediction, over_prediction = array("d"),array("d"),array("d")
@@ -135,7 +135,7 @@ for i in range(5,1,-1):
 
 
 c1.BuildLegend(0.65,0.75,0.95,0.90,"Number of True Electrons (n):")
-c1.SaveAs("mincc_response20_MinPevsunder.png")
+c1.SaveAs("minhits_response20_MinPevsunder.png")
 
 
 
@@ -173,7 +173,7 @@ for i in range(5,1,-1):
 #c1.SetLogy()
 #c1.SetLogx()
 c1.BuildLegend(0.65,0.75,0.95,0.9,"Number of True Electrons (n):")
-#c1.SaveAs("mincc_response20_MinPevsOver.png")
+c1.SaveAs("ch_response20_MinPevsOver.png")
 
 
 for i in range(5,1,-1):
@@ -207,5 +207,5 @@ for i in range(5,1,-1):
 #c1.SetLogx()
 #c1.SetLogy()
 c1.BuildLegend(0.2,0.75,0.5,0.9,"Number of True Electrons (n):")
-#c1.SaveAs("miincc_response20_OvervsEff.png")
+c1.SaveAs("ch_response20_OvervsEff.png")
 

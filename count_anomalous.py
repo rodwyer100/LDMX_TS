@@ -1,3 +1,5 @@
+# this code calculates the number of events for which the true num for the Upsteam array was greater than the true num of tagger array
+
 import ROOT as r
 from ldmx_container import *
 import pandas as pd
