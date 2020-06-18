@@ -1,4 +1,15 @@
+import numpy as np
 import uproot
+
+def colored_format(x,color_id):
+    colors=["\033[31m{0}\033[00m", #red
+            "\033[32m{0}\033[00m", #green
+            "\033[34m{0}\033[00m", #blue
+            "\033[35m{0}\033[00m", #purple
+            "\033[95m{0}\033[00m", #pink
+            "\033[37m{0}\033[00m"  #light gray
+            ]
+    return colors[color_id].format(x)
 
 class ts_digi_container:
     def __init__(self,file_name='',tree_name=''):
@@ -23,6 +34,81 @@ class ts_digi_container:
             new_list.append(coll+'.'+branch+'_')
         return new_list
 
+    def dump(self,events):
+
+        print 'legend: RED noise/secondaries'
+        print '        PINK mixed secondaries and beam electrons'
+        print '        BLUE beam electrons'
+
+        for event in events: 
+            format_row=" {:>2} "*self.NUM_CELLS
+            truth_barID=['o']*self.NUM_CELLS
+            for e in self.get_truth_y(event):
+                if e >= 0 and e < self.NUM_CELLS :
+                    truth_barID[int(e)]='x'
+            print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
+            print ' event:',event
+            print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
+            print 'true number of electrons:',self.get_num_beam_electrons(event)
+            print 'ecal energy:',self.get_ecal_energy(event)
+            print format_row.format(*truth_barID)
+            data = [self.print_array('trigScintDigisTag_sim',event),
+                    self.print_array('trigScintDigisDn_sim',event),
+                    self.print_array('trigScintDigisUp_sim',event)]
+            for row in data : 
+                print format_row.format(*row)
+            print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
+
+    def get_ecal_energy(self,event=-1):
+        self.data.update(self.tree.arrays(['EcalSimHits_sim.edep_']),cache=self.cache)
+        self.data['ecal_total_energy']=map(np.sum,self.data['EcalSimHits_sim.edep_'])
+        if event<0 :
+            return self.data['ecal_total_energy']
+        if event>=self.tree.numentries :
+            return None
+        return self.data['ecal_total_energy'][event]
+
+    def print_array(self,coll,event):
+        pes=self.get_data(coll,'pe',event)
+        ids=self.get_data(coll,'barID',event)
+        beamFrac=self.get_data(coll,'beamEfrac',event)
+        channels=['0']*self.NUM_CELLS
+        for i in zip(pes,ids,beamFrac):
+            if i[1] > 49 : 
+                print "error: id is greater than NUM_CELLS:",i[1]
+                continue
+            if i[2] < 0.001 : 
+                channels[i[1]]=colored_format(str(int(i[0])),0)
+            elif i[2] < 1. : 
+                channels[i[1]]=colored_format(str(int(i[0])),4)
+            else : 
+                channels[i[1]]=colored_format(str(int(i[0])),2)
+        return channels
+
+    def get_num_beam_electrons(self,event=-1):
+        self.data.update(self.tree.arrays(['SimParticles_sim.first','SimParticles_sim.second.genStatus_','SimParticles_sim.second.pdgID_'],cache=self.cache))
+        if not 'beam_electron' in self.data:
+            self.data['beam_electron'] = (self.data['SimParticles_sim.second.genStatus_']==1)*(self.data['SimParticles_sim.second.pdgID_']==11)
+            self.data['num_beam_electrons']= map(np.count_nonzero,self.data['beam_electron'])
+        if event<0 : 
+            return self.data['num_beam_electrons']
+        if event>=self.tree.numentries : 
+            return None
+        return self.data['num_beam_electrons'][event]
+    
+    def get_truth_y(self,event=-1):
+        #SimParticles_sim.second.y_
+        if not 'SimParticles_sim.second.y_' in self.data:
+            self.data.update(self.tree.arrays(['SimParticles_sim.second.genStatus_','SimParticles_sim.second.pdgID_','SimParticles_sim.second.y_'],cache=self.cache))
+            self.data['beam_electron'] = (self.data['SimParticles_sim.second.genStatus_']==1)*(self.data['SimParticles_sim.second.pdgID_']==11)
+        self.data['beam_ypos']=self.data['SimParticles_sim.second.y_'][self.data['beam_electron']]
+        self.data['beam_barID']=np.divide(np.subtract(self.data['SimParticles_sim.second.y_'][self.data['beam_electron']],-39.6),1.65)
+        if event<0 : 
+            return self.data['beam_barID']
+        if event>=self.tree.numentries :
+            return None
+        return self.data['beam_barID'][event]
+
     def get_digi_collection(self,coll):    
         self.data.update(self.tree.arrays(self.extend_branch_names(coll,self.digi_dm),cache=self.cache))
 
@@ -33,3 +119,15 @@ class ts_digi_container:
             return None
         else : 
             return self.data[coll+'.'+data_member+'_'][event]
+
+    def count_hits(self,coll,threshold,event=-1):
+        pes = self.get_data(coll,'pe',event)
+        if pes is None : return None
+        if len(pes)==1 : return np.count_nonzero(pes>threshold)
+        return map(np.count_nonzero,pes>threshold)
+
+    def count_clusters(self,coll,threshold,event):
+        pes=self.get_data(coll,'pe',event)
+        ids=self.get_data(coll,'barID',event)
+        print ids[pes>threshold]
+        print pes[pes>threshold]

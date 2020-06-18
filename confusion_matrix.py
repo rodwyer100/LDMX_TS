@@ -1,137 +1,37 @@
+import matplotlib.pyplot as plt
+from ts_digi_container import *
 import ROOT as r
-from ldmx_container import *
-import pandas as pd
 
-r.gStyle.SetOptStat(0)
-r.gROOT.ProcessLine(".L ~/tdrstyle.C")
-r.gROOT.ProcessLine("setTDRStyle()")
-import numpy as np
-#import pandas as pd
+def plot_conf_matrix(x,y):
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+    hist, xbins, ybins, im = ax.hist2d(x,y, bins=np.arange(-0.5,5.5,1))
 
-r.gROOT.SetBatch(True)
+    for i in range(len(ybins)-1):
+        for j in range(len(xbins)-1):
+            ax.text(xbins[j]+0.5,ybins[i]+0.5, hist.T[i,j], 
+                    color="w", ha="center", va="center", fontweight="bold")
 
-def print_hits(electrons, hits):
-    colored_print=["\033[91m{0}\033[00m",
-                   "\033[92m{0}\033[00m",
-                   "\033[94m{0}\033[00m",
-                   "\033[95m{0}\033[00m",
-                   "\033[96m{0}\033[00m",
-                   "\033[97m{0}\033[00m",
-                   "\033[93m{0}\033[00m",
-                   "\033[101m{0}\033[00m",
-                   "\033[104m{0}\033[00m",
-                   "\033[105m{0}\033[00m"]
+cont = ts_digi_container('../ldmx-sw/single_test_100k.root','LDMX_Events')
+cont.get_digi_collection('trigScintDigisTag_sim')
+cont.get_digi_collection('trigScintDigisUp_sim')
+cont.get_digi_collection('trigScintDigisDn_sim')
 
-    output = map(str,hits)
-    for electron in electrons:
-        for i in electrons[electron]:
-            output[i-2] = colored_print[0].format(output[i-2])
-        colored_print.pop(0)
+threshold=50
 
-    print " ".join(output[::2])
-    print " ".join(output[1::2])
+electrons=cont.get_num_beam_electrons()
+tag_hits30=cont.count_hits('trigScintDigisTag_sim',threshold)
+tag_hits30_pred=np.divide(np.add(tag_hits30,1),2)
 
-## set configurable parameters
-debug= False
-coll="TriggerPadTagger" #other options: "TriggerPadTagger", "TriggerPadTagger"
-min_pe=2
+up_hits30=cont.count_hits('trigScintDigisUp_sim',threshold)
+up_hits30_pred=np.divide(np.add(up_hits30,1),2)
 
-## intialize contain to read target input file
-cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p02.root")
-cont.setup()
+dn_hits30=cont.count_hits('trigScintDigisDn_sim',threshold)
+dn_hits30_pred=np.divide(np.add(dn_hits30,1),2)
 
-## initialize histograms
-hist = r.TH2F("confusion_hist",coll+";True Electrons;Pred Electrons",8,-0.5,7.5,8,-0.5,7.5)
-second_hist = r.TH2F("secondCounts_hist",coll+";True-Pred Electrons;Num. Secondaries",9,-4.5,4.5,8,-0.5,7.5)
-hist_true = r.TH1F("true_hist",coll+";True Electrons",8,-0.5,7.5)
+vote=map(lambda x,y,z:np.min([x,y,z]),up_hits30_pred,tag_hits30_pred,dn_hits30_pred)
 
-for i in range(cont.tin.GetEntries()):
+plot_conf_matrix(electrons,vote)
+cont.dump(np.argwhere(np.subtract(vote,electrons)==-1).flatten())
 
-    if i >100 : break 
-    ## initialize container
-    cont.getEvent(i)
-
-    ## get true number of electrons
-    true_num=cont.count_true(coll+"SimHits")
-
-    #### ALGORITHM 1: COUNT THE NUMBER HITS IN AN ARRAY
-    count_hits=cont.count_hits(coll+"Digi",min_pe)
-    count_hits_up=cont.count_hits("TriggerPadUpDigi",min_pe)
-    #### ALGORITHM 2: COUNT THE NUMBER OF HIT CLUSTERS
-    count_clusters=cont.count_clusters(coll+"Digi",min_pe)
-    count_clusters_up=cont.count_clusters("TriggerPadUpDigi",min_pe)
-
-    #### DEBUGGING INFORMATION --- 
-    if debug and true_num == 1 and count_hits == 2 : # and cont.get_num_secondaries() == 0 : 
-
-        hit_energy = cont.trigger_pad_edep(coll+"Digi")
-        hit_pe = cont.trigger_pad_pe(coll+"Digi")
-        hit_energy_up = cont.trigger_pad_edep("TriggerPadUpDigi")
-        hit_pe_up = cont.trigger_pad_pe("TriggerPadUpDigi")
-
-        print "- - - - - - - - - - event: ",i," - - - - - - - - - - - "
-        if true_num == count_clusters and true_num != count_hits : 
-            print "\033[96m - - - - - - - - - - (",true_num,":",count_hits,":",count_clusters,":",count_clusters_up,") - - - - - - - - - - - \033[00m"
-        if true_num == count_clusters and true_num == count_hits : 
-            print "\033[92m - - - - - - - - - - (",true_num,":",count_hits,":",count_clusters,":",count_clusters_up,") - - - - - - - - - - - \033[00m"
-        if true_num != count_clusters and true_num != count_hits : 
-            print "\033[91m - - - - - - - - - - (",true_num,":",count_hits,":",count_clusters,":",count_clusters_up,") - - - - - - - - - - - \033[00m"
-        if true_num != count_clusters and true_num == count_hits : 
-            print "\033[94m - - - - - - - - - - (",true_num,":",count_hits,":",count_clusters,":",count_clusters_up,") - - - - - - - - - - - \033[00m"
-
-        gen_hits=cont.gen_hits(coll+"SimHits")
-        #print "tagger hits"
-        #print gen_hits
-        print "photo-electrons:"
-        print_hits(gen_hits,hit_pe)
-        #print "gen edep:"
-        #print_hits(gen_hits,hit_energy)
-
-        # print "up-stream hits"
-        # print gen_hits_up
-        # print "photo-electrons:"
-        # print_hits(gen_hits,hit_pe_up)
-        # print "gen edep:"
-        # print_hits(gen_hits,hit_energy_up)
-
-        print "scoring plane hits:"
-        cont.print_sp_hits()
-
-    ## fill histograms
-    hist.Fill(true_num,min(count_clusters,count_clusters_up))
-    #hist.Fill(true_num,count_hits) #alternative min(count_clusters,count_clusters_up))
-    hist_true.Fill(true_num)
-    second_hist.Fill(true_num-count_clusters,cont.get_num_secondaries())
-
-values = [0.]*3 # list to store values on, below and above the main diagonal
-for x in range(1,hist.GetNbinsX()+1):
-    for y in range(1,hist.GetNbinsY()+1):
-        if x==y : values[0]    += hist.GetBinContent(x,y) # values on the diagonal
-        if y<x  : values[1]    += hist.GetBinContent(x,y) # values below the diagonal
-        if y>x  : values[2]    += hist.GetBinContent(x,y) # values above the diagonal
-
-print values
-total = reduce(lambda x,y : x+y, values)
-event_rate = map(lambda x: (x/total), values)
-print event_rate
-
-
-## normalize each num_true electrons column to same area
-for x in range(1,hist.GetNbinsX()+1):
-    for y in range(1,hist.GetNbinsY()+1):
-        if hist_true.GetBinContent(x) != 0 :
-            hist.SetBinContent(x,y,hist.GetBinContent(x,y)/hist_true.GetBinContent(x))
-
-## plot histograms
-can=r.TCanvas("can","can",500,500)
-can.SetRightMargin(0.15)
-hist.Draw("colz,text")
-
-leg = r.TLegend(.2,.7,.5,.9,coll)
-leg.SetBorderSize(0)
-leg.Draw()
-can.SaveAs("trail2_nor_pe2.png")
-
-#second_hist.Draw("colz")
-#can.SetLogz()
-#can.SaveAs("secondaries.png")
+plt.show()
