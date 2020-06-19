@@ -1,6 +1,7 @@
 import numpy as np
 import uproot
 
+## helper function for printing colored text
 def colored_format(x,color_id):
     colors=["\033[31m{0}\033[00m", #red
             "\033[32m{0}\033[00m", #green
@@ -27,13 +28,17 @@ class ts_digi_container:
         self.event_data={}
         self.cache={}
         self.NUM_CELLS=50
-
+    
+    ## helper function for formatting branch names
+    ## generally users won't use this...
     def extend_branch_names(self,coll,branch_list):
         new_list=[]
         for branch in branch_list:
             new_list.append(coll+'.'+branch+'_')
         return new_list
 
+    ## Dump an ascii event display and some truth level information
+    ## for a list of events. 
     def dump(self,events):
 
         print 'legend: RED noise/secondaries'
@@ -59,15 +64,8 @@ class ts_digi_container:
                 print format_row.format(*row)
             print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
 
-    def get_ecal_energy(self,event=-1):
-        self.data.update(self.tree.arrays(['EcalSimHits_sim.edep_']),cache=self.cache)
-        self.data['ecal_total_energy']=map(np.sum,self.data['EcalSimHits_sim.edep_'])
-        if event<0 :
-            return self.data['ecal_total_energy']
-        if event>=self.tree.numentries :
-            return None
-        return self.data['ecal_total_energy'][event]
-
+    ## Extract information for a given array to be printed
+    ## NOTE** this function doesn't explicitly print anything **
     def print_array(self,coll,event):
         pes=self.get_data(coll,'pe',event)
         ids=self.get_data(coll,'barID',event)
@@ -85,6 +83,18 @@ class ts_digi_container:
                 channels[i[1]]=colored_format(str(int(i[0])),2)
         return channels
 
+    ## Get total energy as measured in the ecal
+    ## this simply sums sim hits and doesn't include reconstruction efects
+    def get_ecal_energy(self,event=-1):
+        self.data.update(self.tree.arrays(['EcalSimHits_sim.edep_']),cache=self.cache)
+        self.data['ecal_total_energy']=map(np.sum,self.data['EcalSimHits_sim.edep_'])
+        if event<0 :
+            return self.data['ecal_total_energy']
+        if event>=self.tree.numentries :
+            return None
+        return self.data['ecal_total_energy'][event]
+
+    ## Get the true number of beam electrons
     def get_num_beam_electrons(self,event=-1):
         self.data.update(self.tree.arrays(['SimParticles_sim.first','SimParticles_sim.second.genStatus_','SimParticles_sim.second.pdgID_'],cache=self.cache))
         if not 'beam_electron' in self.data:
@@ -96,6 +106,8 @@ class ts_digi_container:
             return None
         return self.data['num_beam_electrons'][event]
     
+    ## Get y vertex values for each gen-level electron
+    ## position is returned in units of barID
     def get_truth_y(self,event=-1):
         #SimParticles_sim.second.y_
         if not 'SimParticles_sim.second.y_' in self.data:
@@ -109,9 +121,17 @@ class ts_digi_container:
             return None
         return self.data['beam_barID'][event]
 
+    ## Load TS digi collection into local memory
+    ## NOTE: the list of data members that are loaded 
+    ## is configured in self.digi_dm
     def get_digi_collection(self,coll):    
         self.data.update(self.tree.arrays(self.extend_branch_names(coll,self.digi_dm),cache=self.cache))
 
+    ## get an arbitrary branch from the tree
+    ## user should pass the collection and the data member separately
+    ## ------- uses:
+    ##         get_data('EcalSimHits_sim','edep') # get edep for all events and all sim hits
+    ##         get_data('EcalSimHits_sim','edep',10) # get edep for the 11th event and all sim hits
     def get_data(self,coll,data_member,event=-1):
         if event<0 : 
             return self.data[coll+'.'+data_member+'_']
@@ -120,12 +140,17 @@ class ts_digi_container:
         else : 
             return self.data[coll+'.'+data_member+'_'][event]
 
+    ## Computes the number of hits over threshold in a given array (coll)
+    ## ------- uses:
+    ##         count_hits('trigScintDigisTag_sim',50) # return number of hits for all events
+    ##         count_hits('trigScintDigisTag_sim',50,10) # return number of hits for the 10th event
     def count_hits(self,coll,threshold,event=-1):
         pes = self.get_data(coll,'pe',event)
         if pes is None : return None
         if len(pes)==1 : return np.count_nonzero(pes>threshold)
         return map(np.count_nonzero,pes>threshold)
 
+    ## Not yet implemented !!!
     def count_clusters(self,coll,threshold,event):
         pes=self.get_data(coll,'pe',event)
         ids=self.get_data(coll,'barID',event)
