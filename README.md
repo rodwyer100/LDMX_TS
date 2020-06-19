@@ -1,5 +1,5 @@
 This repo is a beginners guide to quick python-based analysis of LDMX trigger scintillator data. 
-The code depends on a few packages: ROOT, uproot, matplotlib.pyplot, and numpy. If you have 
+The code depends on a few packages: [ROOT](https://root.cern.ch/downloading-root), [uproot](https://github.com/scikit-hep/uproot#jagged-array-performance), [matplotlib](https://matplotlib.org/3.2.1/users/installing.html), and [numpy](https://numpy.org/install/). If you have 
 the LDMX container install, you will have all but uproot installed.  You can also instal all 
 of these yourself without LDMX installed. If you want to install uproot into your container, 
 you can build your own tag of ldmx/dev using the following Dockerfile.
