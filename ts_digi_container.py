@@ -147,8 +147,8 @@ class ts_digi_container:
     def count_hits(self,coll,threshold,event=-1):
         pes = self.get_data(coll,'pe',event)
         if pes is None : return None
-        if len(pes)==1 : return np.count_nonzero(pes>threshold)
-        return map(np.count_nonzero,pes>threshold)
+        if event>=0 : return np.count_nonzero(pes>threshold)
+        else : return map(np.count_nonzero,pes>threshold)
 
     ## Not yet implemented !!!
     def count_clusters(self,coll,threshold,event):
