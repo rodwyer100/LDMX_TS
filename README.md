@@ -9,18 +9,18 @@ FROM ldmx/dev:latest
 RUN apt-get update && apt-get install python-pip -y && pip install --no-cache-dir uproot
 ```
 
-Name it Dockerfile_uproot to avoid confusion with the existing LDMX container Dockerfile.
+Name it `Dockerfile_uproot` to avoid confusion with the existing LDMX container Dockerfile.
 
 
 Then build it with:
 
 `docker build . -f Dockerfile_uproot -t ldmx/dev:uproot`
 
-Currently, ldmx-env.sh assumes that all the container versions we'd like to use can be found in the docker repo (and dowloaded using the command `docker pull`).
+Currently, ldmx-env.sh assumes that all the container versions we'd like to use can be found in the docker repo (and downloaded using the command `docker pull`).
 
-To use your local copy, for now you have to comment the line with `docker pull ${LDMX_DOCKER_TAG}`
+To use your local copy, for now you have to comment the line with `docker pull ${LDMX_DOCKER_TAG}` in `ldmx-env.sh`
 
-You will have to tell ldmx-env.sh that you want to use a different tag as well:
+You will have to tell `ldmx-env.sh` that you want to use a different tag as well:
 
 `source ldmx-sw/scripts/ldmx-env.sh . uproot`
 
