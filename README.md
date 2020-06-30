@@ -17,7 +17,6 @@ Then build it with:
 `docker build . -f Dockerfile_uproot -t ldmx/dev:uproot`
 
 Currently, ldmx-env.sh assumes that all the container versions we'd like to use can be found in the docker repo (and downloaded using the command `docker pull`).
-
 To use your local copy, for now you have to comment the line with `docker pull ${LDMX_DOCKER_TAG}` in `ldmx-env.sh`
 
 You will have to tell `ldmx-env.sh` that you want to use a different tag as well:
