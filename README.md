@@ -7,7 +7,7 @@ You will have to tell `ldmx-env.sh` that you want to use the `pytools` tag:
 
 `source [path-to-ldmx-sw]/ldmx-sw/scripts/ldmx-env.sh [path-to-ldmx-sw] pytools`
 
-NOTE that `[path-to-ldmx-sw]` should be replaced with any (relative) path to the directory where the `ldmx-sw` directory is located in your setup, or `.` for the present working directory.
+NOTE that `[path-to-ldmx-sw]` should be replaced with any (relative) path to the directory where the `ldmx-sw` directory is located in your setup, or `.` for the present working directory. Run this command **every time** you want to run analysis from a fresh shell.
 
 The code is setup such that `ts_digi_container.py` should be used load the tree and
 extract information from the tree. In general, users can use the `get_data`
