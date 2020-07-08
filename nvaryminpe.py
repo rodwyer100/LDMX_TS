@@ -1,12 +1,12 @@
 ### change in min_pe 1-10 and plots for each number of true electrons n= 1,2,3,4
 
 import ROOT as r
-from ldmx_container import *
+from ts_digi_container import *
 import pandas as pd
 import numpy as np
 from array import array
 r.gStyle.SetOptStat(0)
-r.gROOT.ProcessLine(".L ~/tdrstyle.C")
+r.gROOT.ProcessLine(".L tdrstyle.C")
 r.gROOT.ProcessLine("setTDRStyle()")
 r.gROOT.SetBatch(True)
 
@@ -15,7 +15,7 @@ r.gROOT.SetBatch(True)
 coll="TriggerPadTagger" #other options: "TriggerPadUpSimHits", "TriggerPadDownSimHits"
 
 ## intialize contain to read target input file
-cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_20_noise_0p001.root")
+cont = ts_digi_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_20_noise_0p001.root")
 cont.setup()
 
 stacks = [] # to keep hist in memory 

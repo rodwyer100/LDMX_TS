@@ -2,13 +2,13 @@
 ### change in noise ["001","002","005","01","02","05"] and plots for each number of true electrons n= 1,2,3,4
 
 import ROOT as r
-from ldmx_container import *
+from ts_digi_container import *
 import pandas as pd
 import numpy as np
 from array import array 
 
 r.gStyle.SetOptStat(0)
-r.gROOT.ProcessLine(".L ~/tdrstyle.C")
+r.gROOT.ProcessLine(".L tdrstyle.C")
 r.gROOT.ProcessLine("setTDRStyle()")
 r.gROOT.SetBatch(True)
 
@@ -30,7 +30,7 @@ Dict = dict()
 for  noise in diff_noise:
     l=float("0."+noise)
     Noise.append(l)
-    cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p"+noise+".root")
+    cont = ts_digi_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p"+noise+".root")
     cont.setup()
 
     ## initialize histograms

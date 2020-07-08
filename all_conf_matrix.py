@@ -2,11 +2,11 @@
 
 
 import ROOT as r
-from ldmx_container import *
+from ts_digi_container import *
 import pandas as pd
 
 r.gStyle.SetOptStat(0)
-r.gROOT.ProcessLine(".L ~/tdrstyle.C")
+r.gROOT.ProcessLine(".L tdrstyle.C")
 r.gROOT.ProcessLine("setTDRStyle()")
 import numpy as np
 #import pandas as pd
@@ -40,7 +40,7 @@ coll="TriggerPadTagger" #other options: "TriggerPadTagger", "TriggerPadTagger"
 
 
 ## intialize contain to read target input file
-cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p001.root")
+cont = ts_digi_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p001.root")
 cont.setup()
 
 ## plot histograms

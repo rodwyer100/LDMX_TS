@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from ts_digi_container import *
 import ROOT as r
@@ -14,7 +16,7 @@ def plot_conf_matrix(x,y):
                     color="w", ha="center", va="center", fontweight="bold")
 
 ## load and initialize container
-cont = ts_digi_container('../ldmx-sw/single_test_100k.root','LDMX_Events')
+cont = ts_digi_container('test.root','LDMX_Events')
 cont.get_digi_collection('trigScintDigisTag_sim')
 cont.get_digi_collection('trigScintDigisUp_sim')
 cont.get_digi_collection('trigScintDigisDn_sim')
