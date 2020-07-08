@@ -1,30 +1,13 @@
 This repo is a beginners guide to quick python-based analysis of LDMX trigger scintillator data. 
 The code depends on a few packages: [ROOT](https://root.cern.ch/downloading-root), [uproot](https://github.com/scikit-hep/uproot#jagged-array-performance), [matplotlib](https://matplotlib.org/3.2.1/users/installing.html), and [numpy](https://numpy.org/install/). If you have 
 the LDMX container install, you will have all but uproot installed.  You can also install all 
-of these yourself without LDMX installed. If you want to install uproot into your container, 
-you can build your own tag of ldmx/dev using the following Dockerfile.
+of these yourself without LDMX installed. If you have cloned `ldmx-sw` from github, you can download a docker container with all these dependencies needed for analysis as well as for running `ldmx-sw` to simulate data. 
 
-```
-FROM ldmx/dev:latest
-RUN apt-get update && apt-get install python-pip -y && pip install --no-cache-dir uproot
-```
+You will have to tell `ldmx-env.sh` that you want to use the `pytools` tag:
 
-Name it Dockerfile_uproot to avoid confusion with the existing LDMX container Dockerfile.
+`source [path-to-ldmx-sw]/ldmx-sw/scripts/ldmx-env.sh [path-to-ldmx-sw] pytools`
 
-
-Then build it with:
-
-`docker build . -f Dockerfile_uproot -t ldmx/dev:uproot`
-
-Currently, ldmx-env.sh assumes that all the container versions we'd like to use can be found in the docker repo (and dowloaded using the command `docker pull`).
-
-To use your local copy, for now you have to comment the line with `docker pull ${LDMX_DOCKER_TAG}`
-
-You will have to tell ldmx-env.sh that you want to use a different tag as well:
-
-`source ldmx-sw/scripts/ldmx-env.sh . uproot`
-
-NOTE that `.` should be replaced with any relative path to the directory where the `ldmx-sw` directory is located in your setup, if it isn't the present working directory.
+NOTE that `[path-to-ldmx-sw]` should be replaced with any (relative) path to the directory where the `ldmx-sw` directory is located in your setup, or `.` for the present working directory.
 
 The code is setup such that `ts_digi_container.py` should be used load the tree and
 extract information from the tree. In general, users can use the `get_data`
