@@ -27,3 +27,12 @@ or a single event.  There are some cases where its difficult or impossible to ex
 data for all event simultaneously.  You can distinguish these by checking the defualt
 value `event` in the method's definition.
 
+## Running event simulation with ldmx-sw
+
+You can produce your own events using the runSimAndDigi.py script.
+
+Run it (after sourcing the env script as indicated above, if you're in a fresh shell) as:
+`ldmx fire runSimAndDigi.py [number of electrons per event] [optional: run number] [optional: output file name base]`
+
+The first argument is mandatory.
+Inside the script, you can also change the number of events generated, or if you want to use a fix electron multiplicity per event (default and easiest) or if it should be varied according to a Poisson distribution around the number you specified. Be mindful that a large number of events/electron multiplicity both lead to longer simulation time and larger output files. 
