@@ -1,13 +1,13 @@
 # this code calculates the number of events for which the true num for the Upsteam array was greater than the true num of tagger array
 
 import ROOT as r
-from ldmx_container import *
+from ts_digi_container import *
 import pandas as pd
 from sklearn import svm
 import numpy as np
 from array import array
 r.gStyle.SetOptStat(0)
-r.gROOT.ProcessLine(".L ~/tdrstyle.C")
+r.gROOT.ProcessLine(".L tdrstyle.C")
 r.gROOT.ProcessLine("setTDRStyle()")
 r.gROOT.SetBatch(True)
 
@@ -27,7 +27,7 @@ hist = r.TH2F("confusion_hist",coll+";True Electrons;Pred Electrons",8,-0.5,7.5,
 secondaries= r.TH1D("secondaries","Secondaries Distribution;Secondaries;Events",10,0,10)
 
 ## intialize contain to read target input file
-cont = ldmx_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p02.root")
+cont = ts_digi_container("~whitbeck/raid/LDMX/trigger_pad_sim/Dec18/trig_scin_digi_mip_respons_10_noise_0p02.root")
 cont.setup()
 n=0
 for i in range(cont.tin.GetEntries()):

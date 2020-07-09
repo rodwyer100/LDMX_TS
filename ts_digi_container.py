@@ -41,9 +41,9 @@ class ts_digi_container:
     ## for a list of events. 
     def dump(self,events):
 
-        print 'legend: RED noise/secondaries'
-        print '        PINK mixed secondaries and beam electrons'
-        print '        BLUE beam electrons'
+        print( 'legend: RED noise/secondaries' )
+        print( '        PINK mixed secondaries and beam electrons' )
+        print( '        BLUE beam electrons' )
 
         for event in events: 
             format_row=" {:>2} "*self.NUM_CELLS
@@ -51,18 +51,18 @@ class ts_digi_container:
             for e in self.get_truth_y(event):
                 if e >= 0 and e < self.NUM_CELLS :
                     truth_barID[int(e)]='x'
-            print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
-            print ' event:',event
-            print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
-            print 'true number of electrons:',self.get_num_beam_electrons(event)
-            print 'ecal energy:',self.get_ecal_energy(event)
-            print format_row.format(*truth_barID)
+            print( ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ' )
+            print( ' event:',event )
+            print( ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ' )
+            print( 'true number of electrons:',self.get_num_beam_electrons(event) )
+            print( 'ecal energy:',self.get_ecal_energy(event) )
+            print( format_row.format(*truth_barID) )
             data = [self.print_array('trigScintDigisTag_sim',event),
                     self.print_array('trigScintDigisDn_sim',event),
                     self.print_array('trigScintDigisUp_sim',event)]
             for row in data : 
-                print format_row.format(*row)
-            print ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - '
+                print( format_row.format(*row) )
+            print( ' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ' )
 
     ## Extract information for a given array to be printed
     ## NOTE** this function doesn't explicitly print anything **
@@ -73,7 +73,7 @@ class ts_digi_container:
         channels=['0']*self.NUM_CELLS
         for i in zip(pes,ids,beamFrac):
             if i[1] > 49 : 
-                print "error: id is greater than NUM_CELLS:",i[1]
+                print( "error: id is greater than NUM_CELLS:",i[1] )
                 continue
             if i[2] < 0.001 : 
                 channels[i[1]]=colored_format(str(int(i[0])),0)
@@ -154,5 +154,5 @@ class ts_digi_container:
     def count_clusters(self,coll,threshold,event):
         pes=self.get_data(coll,'pe',event)
         ids=self.get_data(coll,'barID',event)
-        print ids[pes>threshold]
-        print pes[pes>threshold]
+        print( ids[pes>threshold] )
+        print( pes[pes>threshold] )
