@@ -16,7 +16,7 @@ from LDMX.EventProc.trigScintDigis import TrigScintDigiProducer
 from LDMX.Framework import ldmxcfg
 
 
-nEv = 10
+nEv = 1000
 
 if len(sys.argv) < 1 :
     print("The number of beam electrons has to be specified. Use (positional) argument 1 for it.")
