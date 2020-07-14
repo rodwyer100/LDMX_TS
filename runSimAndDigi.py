@@ -67,7 +67,14 @@ mpgGen.vertex = [ -27.926, 0., -700 ] # mm
 mpgGen.nParticles = int(nPart)
 mpgGen.pdgID = 11
 mpgGen.enablePoisson = doPoisson 
-mpgGen.momentum = [ 380., 0., 3981.909 ] #MeV
+
+import math
+theta = math.radians(4.5)
+mpgGen.momentum = [ 4000.*math.sin(theta) , 0, 4000.*math.cos(theta) ] # MeV
+#mpgGen.momentum = [ 380., 0., 3981.909 ] #MeV
+
+
+
 
 #set this as the simulator's generator
 mySim.generators = [ mpgGen ]
@@ -83,6 +90,9 @@ p.maxEvents=nEv
 tsDigisUp  =TrigScintDigiProducer.up()
 tsDigisTag  =TrigScintDigiProducer.tagger()
 tsDigisDown  =TrigScintDigiProducer.down()
+tsDigisUp.pe_per_mip = 100.
+tsDigisTag.pe_per_mip = tsDigisUp.pe_per_mip
+tsDigisDown.pe_per_mip = tsDigisUp.pe_per_mip
 
 # add these to the sequence of processes the code should run
 p.sequence=[ mySim, tsDigisUp, tsDigisTag, tsDigisDown ]
