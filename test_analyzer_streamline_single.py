@@ -35,9 +35,9 @@ if (hist_dim == '2D'):
 	yhigh = float(raw_input('Y high: '))
 
 ## initialize root histogram
-hist1 = r.TH1F("1e_tag_" + variable + "_100R_noCuts","Title;" + x_ax + ";Hits",xbins,xlow,xhigh)
-hist2 = r.TH1F("1e_up_" + variable + "_100R_noCuts","Title;" + x_ax + ";Hits",xbins,xlow,xhigh)
-hist3 = r.TH1F("1e_down_" + variable + "_100R_noCuts","Title;" + x_ax + ";Hits",xbins,xlow,xhigh)
+hist1 = r.TH1F("1e_tag_" + variable + "_100R_allCuts","Title;" + x_ax + ";Hits",xbins,xlow,xhigh)
+hist2 = r.TH1F("1e_up_" + variable + "_100R_allCuts","Title;" + x_ax + ";Hits",xbins,xlow,xhigh)
+hist3 = r.TH1F("1e_down_" + variable + "_100R_allCuts","Title;" + x_ax + ";Hits",xbins,xlow,xhigh)
 hists = [hist1, hist2, hist3]
 hist4 = r.TH2F("1e_tag_aper_prob_100R_2D","Title;Y (barID);F(Y)",50,0,50,50,0,5)
 hist5 = r.TH2F("1e_up_aper_prob_100R_2D","Title;Y (barID);F(Y)",50,0,50,50,0,5)
@@ -101,7 +101,7 @@ totlEven = 0
 
 def aper_ratio(x, next_x, prev_x):
         return (float(next_x + prev_x)/x)
-
+yprev = 0
 
 ## loop over events
 for i in range(cont.tree.numentries):
@@ -118,7 +118,11 @@ for i in range(cont.tree.numentries):
 		hit_dict[l] = 0
     	for k in range(len(params)) :  
 		if ((hist_dim == '1D') and ((pNoise.lower() == 'n') or ((pNoise.lower() == 'y') and (rnoiseDiscr[k] > 0.2))) and ((sNoise.lower() == 'n') or ((sNoise.lower() == 'y') and ((rnoiseDiscr[k] < 0.2) or (rnoiseDiscr[k] > 0.9)) ))):
-        		hists[j].Fill(params[k])
+			if (barNums[k] % 2 == 0):
+				yLocal = params[k] - 3*(float(barNums[k] - 24)/2) - 0.3*((barNums[k] - 24)/2)
+			if (barNums[k] % 2 != 0):
+				yLocal = params[k] - 3*(float(barNums[k] - 25)/2) - 0.3*((barNums[k] - 25)/2)
+			hists[j].Fill(yLocal)
 			if (barNums[k] < 50):
                         	hit_dict[barNums[k]] = 1
 		if ((hist_dim == '2D') and ((pNoise.lower() == 'n') or ((pNoise.lower() == 'y') and (rnoiseDiscr[k] >  0.2))) and ((sNoise.lower() == 'n') or ((sNoise.lower() == 'y') and ((rnoiseDiscr[k] < 0.2) or (rnoiseDiscr[k] > 0.9)) ))):
@@ -196,12 +200,12 @@ for i in range(cont.tree.numentries):
 			else:
 				hodd_f[j]+=1
 
-
+print(yprev)
 #plot!
 c1 = r.TCanvas("c1", "hist1 canvas", 600,  500)
-hists[0].SetFillColor(2)
-hists[0].SetLineColor(4)
-hists[0].SetLineStyle(2)
+#hists[0].SetFillColorAlpha(2,0.3)
+hists[0].SetLineColor(2)
+hists[0].SetLineStyle(1)
 if (hist_dim == '1D'):
 	hists[0].Draw()
 if (hist_dim == '2D'):
@@ -212,55 +216,58 @@ if (hist_dim == '1D'):
 if (hist_dim == '2D'):
 	leg1 = r.TLegend(0.6,0.7,0.8,0.9)
 if (veto == 'Total Hits'):
-        leg1.SetHeader("Total Hits = " + str(entries_r[0] + entries_f[0]), "C")
+        leg1.SetHeader("Total Hits = " + str(entries_r[0] + entries_f[0]+ entries_r[1] + entries_f[1] + entries_r[2] + entries_f[2]), "C")
 if (veto == 'Real Electron'):
-        leg1.SetHeader("Electron Hits = " + str(entries_r[0]), "C")
+        leg1.SetHeader("Electron Hits = " + str(entries_r[0] + entries_r[1] + entries_r[2]), "C")
 if (veto == 'Pure Noise'):
-        leg1.SetHeader("Noise Hits = " + str(entries_f[0]), "C")
+        leg1.SetHeader("Noise Hits = " + str(entries_f[0] + entries_f[1] + entries_f[2]), "C")
+leg1.AddEntry(hists[0],"Tagger","L")
 leg1.Draw()
 
 
-c2 = r.TCanvas("c2", "hist2 canvas", 600,  500)
-hists[1].SetFillColor(2)
-hists[1].SetLineColor(4)
-hists[1].SetLineStyle(2)
+#c2 = r.TCanvas("c2", "hist2 canvas", 600,  500)
+#hists[1].SetFillColorAlpha(3,0.3)
+hists[1].SetLineColor(3)
+hists[1].SetLineStyle(1)
 if (hist_dim == '1D'):
-        hists[1].Draw()
+        hists[1].Draw("same")
 if (hist_dim == '2D'):
-        hists[1].Draw("COLZ")
-c2.SetRightMargin( 5.*c2.GetRightMargin() )
-if (hist_dim == '1D'):
-        leg2 = r.TLegend(0.8,0.7,1.0,0.9)
-if (hist_dim == '2D'):
-        leg2 = r.TLegend(0.6,0.7,0.8,0.9)
-if (veto == 'Total Hits'):
-        leg2.SetHeader("Total Hits = " + str(entries_r[1] + entries_f[1]), "C")
-if (veto == 'Real Electron'):
-        leg2.SetHeader("Electron Hits = " + str(entries_r[1]), "C")
-if (veto == 'Pure Noise'):
-        leg2.SetHeader("Noise Hits = " + str(entries_f[1]), "C")
-leg2.Draw()
+        hists[1].Draw("sameCOLZ")
+#c2.SetRightMargin( 5.*c2.GetRightMargin() )
+#if (hist_dim == '1D'):
+ #       leg2 = r.TLegend(0.8,0.7,1.0,0.9)
+#if (hist_dim == '2D'):
+ #       leg2 = r.TLegend(0.6,0.7,0.8,0.9)
+#if (veto == 'Total Hits'):
+ #       leg2.SetHeader("Total Hits = " + str(entries_r[1] + entries_f[1]), "C")
+#if (veto == 'Real Electron'):
+ #       leg2.SetHeader("Electron Hits = " + str(entries_r[1]), "C")
+#if (veto == 'Pure Noise'):
+ #       leg2.SetHeader("Noise Hits = " + str(entries_f[1]), "C")
+#leg2.Draw()
+leg1.AddEntry(hists[1],"Upstream","L")
 
-c3 = r.TCanvas("c3", "hist3 canvas", 600,  500)
-hists[2].SetFillColor(2)
-hists[2].SetLineColor(4)
-hists[2].SetLineStyle(2)
+#c3 = r.TCanvas("c3", "hist3 canvas", 600,  500)
+#hists[2].SetFillColorAlpha(4,0.3)
+hists[2].SetLineColor(5)
+hists[2].SetLineStyle(1)
 if (hist_dim == '1D'):
-        hists[2].Draw()
+        hists[2].Draw("same")
 if (hist_dim == '2D'):
-        hists[2].Draw("COLZ")
-c3.SetRightMargin( 5.*c3.GetRightMargin() )
-if (hist_dim == '1D'):
-        leg3 = r.TLegend(0.8,0.7,1.0,0.9)
-if (hist_dim == '2D'):
-        leg3 = r.TLegend(0.6,0.7,0.8,0.9)
-if (veto == 'Total Hits'):
-	leg3.SetHeader("Total Hits = " + str(entries_r[2] + entries_f[2]), "C")
-if (veto == 'Real Electron'):
-	leg3.SetHeader("Electron Hits = " + str(entries_r[2]), "C")
-if (veto == 'Pure Noise'):
-	leg3.SetHeader("Noise Hits = " + str(entries_f[2]), "C")
-leg3.Draw()
+        hists[2].Draw("sameCOLZ")
+#c3.SetRightMargin( 5.*c3.GetRightMargin() )
+#if (hist_dim == '1D'):
+ #       leg3 = r.TLegend(0.8,0.7,1.0,0.9)
+#if (hist_dim == '2D'):
+ #       leg3 = r.TLegend(0.6,0.7,0.8,0.9)
+#if (veto == 'Total Hits'):
+#	leg3.SetHeader("Total Hits = " + str(entries_r[2] + entries_f[2]), "C")
+#if (veto == 'Real Electron'):
+#	leg3.SetHeader("Electron Hits = " + str(entries_r[2]), "C")
+#if (veto == 'Pure Noise'):
+#	leg3.SetHeader("Noise Hits = " + str(entries_f[2]), "C")
+#leg3.Draw()
+leg1.AddEntry(hists[2],"Downstream","L")
 
 
 #generate histograms for electron escape probability
@@ -340,38 +347,44 @@ if (aper_tog.lower() == 'y'):
 
 
 	c13 = r.TCanvas("c13", "hist16 canvas", 600,  500)
-	hists_odds[0].SetFillColor(3)
+	#hists_odds[0].SetFillColor(3)
 	hists_odds[0].SetLineColor(5)
 	hists_odds[0].SetLineStyle(2)
-	hists_odds_adj[0].SetFillColor(2)
-	hists_odds_adj[0].SetLineColor(4)
-	hists_odds_adj[0].SetLineStyle(2)
-	hists_odds_adj[0].Divide(hists_odds[0])
+	#hists_odds_adj[0].SetFillColor(2)
+	hists_odds_adj[0].SetLineColor(2)
+	hists_odds_adj[0].SetLineStyle(1)
+	print(hists_odds_adj[0].GetBinContent(2))
+	print(hists_odds[0].GetBinContent(2))
+	hists_odds_adj[0].Divide(hists_odds_adj[0],hists_odds[0],1,1,"B")
+	print(hists_odds_adj[0].GetBinContent(2))
+	print(hists_odds_adj[0].GetBinError(2))
 	c13.SetRightMargin( 5.*c13.GetRightMargin() )
 	leg4 = r.TLegend(0.8,0.7,1.0,0.9)
 	leg4.AddEntry(hists_odds_adj[0],"Tagger","L")
 	hists_odds_adj[0].Draw("he")
 
 	#c14 = r.TCanvas("c14", "hist17 canvas", 600,  500)
-	hists_odds[1].SetFillColor(3)
+	#hists_odds[1].SetFillColor(3)
 	hists_odds[1].SetLineColor(5)
 	hists_odds[1].SetLineStyle(2)
-	hists_odds_adj[1].SetFillColor(4)
-	hists_odds_adj[1].SetLineColor(4)
-	hists_odds_adj[1].SetLineStyle(2)
-	hists_odds_adj[1].Divide(hists_odds[1])
+	#hists_odds_adj[1].SetFillColor(4)
+	hists_odds_adj[1].SetLineColor(3)
+	hists_odds_adj[1].SetLineStyle(1)
+	hists_odds_adj[1].Divide(hists_odds_adj[1],hists_odds[1],1,1,"B")
+	print(hists_odds_adj[1].GetBinError(2))
 	#c14.SetRightMargin( 5.*c14.GetRightMargin() )
 	leg4.AddEntry(hists_odds_adj[1],"Upstream","L")
 	hists_odds_adj[1].Draw("hesame")
 
 	#c15 = r.TCanvas("c15", "hist18 canvas", 600,  500)
-	hists_odds[2].SetFillColor(3)
+	#hists_odds[2].SetFillColor(3)
 	hists_odds[2].SetLineColor(5)
 	hists_odds[2].SetLineStyle(2)
-	hists_odds_adj[2].SetFillColor(5)
-	hists_odds_adj[2].SetLineColor(4)
-	hists_odds_adj[2].SetLineStyle(2)
-	hists_odds_adj[2].Divide(hists_odds[2])
+	#hists_odds_adj[2].SetFillColor(5)
+	hists_odds_adj[2].SetLineColor(1)
+	hists_odds_adj[2].SetLineStyle(1)
+	hists_odds_adj[2].Divide(hists_odds_adj[2],hists_odds[2],1,1,"B")
+	print(hists_odds_adj[2].GetBinError(2))
 	#c15.SetRightMargin( 5.*c15.GetRightMargin() )
 	leg4.AddEntry(hists_odds_adj[2],"Downstream","L")
 	leg4.Draw()
@@ -384,8 +397,9 @@ if (two_layer_prob.lower() == 'y'):
 	hists_evens[0].SetLineStyle(2)
 	#hists_evens_adj[0].SetFillColor(2)
 	hists_evens_adj[0].SetLineColor(2)
-	hists_evens_adj[0].SetLineStyle(2)
-	hists_evens_adj[0].Divide(hists_evens[0])
+	hists_evens_adj[0].SetLineStyle(1)
+	hists_evens_adj[0].Divide(hists_evens_adj[0],hists_evens[0],1,1,"B")
+	print(hists_evens_adj[0].GetBinError(1))
 	c16.SetRightMargin( 5.*c16.GetRightMargin() )
 	leg5 = r.TLegend(0.8,0.7,1.0,0.9)
 	leg5.AddEntry(hists_evens_adj[0],"Tagger","L")
@@ -396,9 +410,10 @@ if (two_layer_prob.lower() == 'y'):
 	hists_evens[1].SetLineColor(5)
 	hists_evens[1].SetLineStyle(2)
 	#hists_evens_adj[1].SetFillColor(4)
-	hists_evens_adj[1].SetLineColor(4)
-	hists_evens_adj[1].SetLineStyle(2)
-	hists_evens_adj[1].Divide(hists_evens[1])
+	hists_evens_adj[1].SetLineColor(3)
+	hists_evens_adj[1].SetLineStyle(1)
+	hists_evens_adj[1].Divide(hists_evens_adj[1],hists_evens[1],1,1,"B")
+	print(hists_evens_adj[1].GetBinError(1))
 	#c17.SetRightMargin( 5.*c17.GetRightMargin() )
 	leg5.AddEntry(hists_evens_adj[1],"Upstream","L")
 	hists_evens_adj[1].Draw("hesame")
@@ -408,9 +423,10 @@ if (two_layer_prob.lower() == 'y'):
 	hists_evens[2].SetLineColor(5)
 	hists_evens[2].SetLineStyle(2)
 	#hists_evens_adj[2].SetFillColor(5)
-	hists_evens_adj[2].SetLineColor(6)
-	hists_evens_adj[2].SetLineStyle(2)
-	hists_evens_adj[2].Divide(hists_evens[2])
+	hists_evens_adj[2].SetLineColor(1)
+	hists_evens_adj[2].SetLineStyle(1)
+	hists_evens_adj[2].Divide(hists_evens_adj[2],hists_evens[2],1,1,"B")
+	print(hists_evens_adj[2].GetBinError(1))
 	#c18.SetRightMargin( 5.*c18.GetRightMargin() )
 	leg5.AddEntry(hists_evens_adj[2],"Downstream","L")
 	leg5.Draw()
@@ -443,8 +459,8 @@ if (two_layer_prob.lower() == 'y'):
 
 #archive histograms
 c1.SaveAs( hists[0].GetName()+".png")
-c2.SaveAs( hists[1].GetName()+".png")
-c3.SaveAs( hists[2].GetName()+".png")
+#c2.SaveAs( hists[1].GetName()+".png")
+#c3.SaveAs( hists[2].GetName()+".png")
 if (aper_tog.lower() == 'y'):
 	c4.SaveAs( hists_aper[0].GetName()+".png")
 	c5.SaveAs( hists_aper[1].GetName()+".png")
