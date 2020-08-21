@@ -15,8 +15,8 @@ p=ldmxcfg.Process("digi")
 
 #load the template trigger scintillator clustering and tracking configuration files
 
-from LDMX.EventProc.trigScintClustering import TrigScintClusterProducer
-from LDMX.EventProc.trigScintTracking import trigScintTrack
+from LDMX.EventProc.trigScint import TrigScintClusterProducer
+from LDMX.EventProc.trigScint import trigScintTrack
 
 
 #clustering: seeding threshold 
@@ -30,7 +30,6 @@ tagClThr = 5.  # default: 1. here use something >> typical electronics noise, wh
 
 #tracking: max distance between cluster candidate position and seed cluster position
 maxDelta = 1.25
-
 
 clusteringVerbosity=0
 trackingVerbosity=0
