@@ -8,6 +8,7 @@ cont.get_digi_collection('trigScintDigisUp_sim')
 cont.get_digi_collection('trigScintDigisDn_sim')
 
 cont.get_cluster_collection('TriggerPadTaggerClusters_digi')
+cont.get_track_collection('TriggerPadTracks_digi')
 
 ## configuration for pretty root plots
 r.gROOT.ProcessLine(".L tdrstyle.C")
@@ -16,6 +17,7 @@ r.gROOT.ProcessLine("setTDRStyle()")
 ## initialize root histogram
 hist = r.TH1F("test","Title;Photo-electrons;Events",40,0,200)
 hBeamEfrac = r.TH1F("hBeamEfrac","beam fraction histo;Fraction of energy deposited by beam electrons;Clusters",101,0,1.01)
+hBeamEfracTracks = r.TH1F("hBeamEfracTracks","beam fraction histo;Fraction of energy deposited by beam electrons;Tracks",101,0,1.01)
 
 ## loop over events
 for i in range(cont.tree.numentries):
@@ -32,9 +34,12 @@ for i in range(cont.tree.numentries):
     for pe in pes : 
         hist.Fill(pe)
 
-    beamFrac=cont.get_data('TriggerPadTaggerClusters_digi', 'beamEfrac',i)
-    for frac in beamFrac : 
+    beamFracC=cont.get_data('TriggerPadTaggerClusters_digi', 'beamEfrac',i)
+    for frac in beamFracC : 
         hBeamEfrac.Fill(frac)
+    beamFracT=cont.get_data('TriggerPadTracks_digi', 'beamEfrac',i)
+    for frac in beamFracT : 
+        hBeamEfracTracks.Fill(frac)
 
 
 #plot!
@@ -45,7 +50,16 @@ hist.SetLineStyle(2)
 hist.Draw()
 
 c1.SaveAs( hist.GetName()+".png")
-
+hBeamEfrac.SetLineWidth(3)
+hBeamEfrac.GetYaxis().SetTitle("Entries")
 hBeamEfrac.Draw()
+hBeamEfracTracks.SetLineWidth(3)
+hBeamEfracTracks.SetLineColor(7)
+hBeamEfracTracks.Draw("same")
+
+leg=r.TLegend(0.2, 0.5, 0.5, 0.9)
+leg.AddEntry(hBeamEfrac, "Tagger clusters", "L")
+leg.AddEntry(hBeamEfracTracks, "Tracks", "L")
+leg.Draw()
 c1.SetLogy();
 c1.SaveAs( hBeamEfrac.GetName()+".png")
