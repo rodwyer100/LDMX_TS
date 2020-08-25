@@ -24,6 +24,20 @@ class ts_digi_container:
                       "barID",
                       "beamEfrac"]
 
+        self.cluster_dm=["energy",
+                         "time",
+                         "centroid",
+                         "PE",
+                         "seed",
+                         "nHits",
+                         "hitIDs",
+                         "beamEfrac"]
+
+        self.track_dm=[  "centroid",
+                         "residual",
+                         "nClusters",
+                         "beamEfrac"]
+
         self.data={}
         self.event_data={}
         self.cache={}
@@ -94,6 +108,7 @@ class ts_digi_container:
             return None
         return self.data['ecal_total_energy'][event]
 
+    
     ## Get the true number of beam electrons
     def get_num_beam_electrons(self,event=-1):
         self.data.update(self.tree.arrays(['SimParticles_sim.first','SimParticles_sim.second.genStatus_','SimParticles_sim.second.pdgID_'],cache=self.cache))
@@ -127,6 +142,21 @@ class ts_digi_container:
     def get_digi_collection(self,coll):    
         self.data.update(self.tree.arrays(self.extend_branch_names(coll,self.digi_dm),cache=self.cache))
 
+
+    ## Load TS cluster collection into local memory
+    ## NOTE: the list of data members that are loaded 
+    ## is configured in self.cluster_dm
+    def get_cluster_collection(self,coll):    
+        self.data.update(self.tree.arrays(self.extend_branch_names(coll,self.cluster_dm),cache=self.cache))
+
+        
+    ## Load TS track collection into local memory
+    ## NOTE: the list of data members that are loaded 
+    ## is configured in self.track_dm
+    def get_track_collection(self,coll):    
+        self.data.update(self.tree.arrays(self.extend_branch_names(coll,self.track_dm),cache=self.cache))
+
+        
     ## get an arbitrary branch from the tree
     ## user should pass the collection and the data member separately
     ## ------- uses:
