@@ -28,6 +28,15 @@ or a single event.  There are some cases where its difficult or impossible to ex
 data for all event simultaneously.  You can distinguish these by checking the defualt
 value `event` in the method's definition.
 
+## Running the analysis code with the container
+
+The example script is written in python, and to run it inside the container, just prepend your normal `python` command with `ldmx`:
+
+`ldmx python test_analyzer.py`
+
+Remember that the container is a little bit of a universe of its own. When it gets set up, the setup script mounts your working directory on the container behind the scenes -- but it can't see your entire file system. Be mindful of this if you try to run scripts that are on completely different paths; either copy them over, or set up the container in that path (pro tip: use a fresh shell for this). 
+
+
 ## Running event simulation with ldmx-sw
 
 You can produce your own events using the runSimAndDigi.py script.
