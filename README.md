@@ -42,6 +42,7 @@ Remember that the container is a little bit of a universe of its own. When it ge
 You can produce your own events using the runSimAndDigi.py script.
 
 Run it (after sourcing the env script as indicated above, if you're in a fresh shell) as:
+
 `ldmx fire runSimAndDigi.py [number of electrons per event] [optional: run number] [optional: output file name base]`
 
 The first argument is mandatory.
