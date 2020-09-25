@@ -1,13 +1,13 @@
 This repo is a beginners guide to quick python-based analysis of LDMX trigger scintillator data. 
-The code depends on a few packages: [ROOT](https://root.cern.ch/downloading-root), [uproot](https://github.com/scikit-hep/uproot#jagged-array-performance), [matplotlib](https://matplotlib.org/3.2.1/users/installing.html), and [numpy](https://numpy.org/install/). If you have 
-the LDMX container install, you will have all but uproot installed.  You can also install all 
-of these yourself without LDMX installed. If you have cloned `ldmx-sw` from github, you can download a docker container with all these dependencies needed for analysis as well as for running `ldmx-sw` to simulate data. 
+The code depends on a few packages: [ROOT](https://root.cern.ch/downloading-root), [uproot](https://github.com/scikit-hep/uproot#jagged-array-performance), [matplotlib](https://matplotlib.org/3.2.1/users/installing.html), and [numpy](https://numpy.org/install/). If you use the `unification` LDMX container, you can access all of these, as well as run `ldmx-sw`, by prepending `ldmx` to all your normal commands. 
 
-You will have to tell `ldmx-env.sh` that you want to use the `pytools` tag:
+To set up the container, run
+`source [path-to-ldmx-sw]/ldmx-sw/scripts/ldmx-env.sh -b [path-to-ldmx-sw] -r dev -t unification`
 
-`source [path-to-ldmx-sw]/ldmx-sw/scripts/ldmx-env.sh [path-to-ldmx-sw] pytools`
+(where `-b` is the path to the `ldmx-sw` base dir (defaults to `pwd`), `-r` is for repo (for completeness, these can be `dev` (this is what we want), `local` (for something you built yourself), `pro` (for sample production tags)), and `-t` is for `tag`).
 
-NOTE that `[path-to-ldmx-sw]` should be replaced with any (relative) path to the directory where the `ldmx-sw` directory is located in your setup, or `.` for the present working directory. Run this command **every time** you want to run analysis from a fresh shell.
+
+NOTE that `[path-to-ldmx-sw]` should be replaced with any (relative) path to the directory where the `ldmx-sw` directory is located in your setup, or `.` for the present working directory (`pwd`). Run this command **every time** you want to run analysis from a fresh shell.
 
 The code is setup such that `ts_digi_container.py` should be used load the tree and
 extract information from the tree. In general, users can use the `get_data`
