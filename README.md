@@ -2,7 +2,8 @@ This repo is a beginners guide to quick python-based analysis of LDMX trigger sc
 The code depends on a few packages: [ROOT](https://root.cern.ch/downloading-root), [uproot](https://github.com/scikit-hep/uproot#jagged-array-performance), [matplotlib](https://matplotlib.org/3.2.1/users/installing.html), and [numpy](https://numpy.org/install/). If you use the `unification` LDMX container, you can access all of these, as well as run `ldmx-sw`, by prepending `ldmx` to all your normal commands. 
 
 To set up the container, run
-`source [path-to-ldmx-sw]/ldmx-sw/scripts/ldmx-env.sh -b [path-to-ldmx-sw] -r dev -t unification`
+
+`source [path-to-ldmx-sw]/ldmx-sw/scripts/ldmx-env.sh -r dev -t unification -b [path-to-ldmx-sw] `
 
 (where `-b` is the path to the `ldmx-sw` base dir (defaults to `pwd`), `-r` is for repo (for completeness, these can be `dev` (this is what we want), `local` (for something you built yourself), `pro` (for sample production tags)), and `-t` is for `tag`).
 
