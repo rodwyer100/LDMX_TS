@@ -47,3 +47,17 @@ Run it (after sourcing the env script as indicated above, if you're in a fresh s
 
 The first argument is mandatory.
 Inside the script, you can also change the number of events generated, or if you want to use a fix electron multiplicity per event (default and easiest) or if it should be varied according to a Poisson distribution around the number you specified. Be mindful that a large number of events/electron multiplicity both lead to longer simulation time and larger output files. 
+
+
+
+
+## Running clustering and tracking on a simulated file 
+ldmx fire runClusteringAndTracking.py [nElectrons] [input file] [output file]
+
+Here the number of electrons is not really used for anything but some default naming stuff. So it might get removed. 
+You can for example use `test.root` as input file. You might need to change the pass name in 
+
+`p=ldmxcfg.Process("digi")`
+to something else than "digi", if this pass already exists.
+
+
