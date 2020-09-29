@@ -55,9 +55,23 @@ Inside the script, you can also change the number of events generated, or if you
 `ldmx fire runClusteringAndTracking.py [nElectrons] [input file] [output file]`
 
 Here the number of electrons is not really used for anything but some default naming stuff. So it might get removed. 
-You can for example use `test.root` as input file. You might need to change the pass name in 
-
-`p=ldmxcfg.Process("digi")`
-to something else than "digi", if this pass already exists.
+You can for example use `test.root` as input file. You might need to change the pass name in  `p=ldmxcfg.Process("digi")` to something else than "digi", if this pass already exists.
 
 
+### parameters in clustering and tracking
+The example python script has a few variables of its own, for convenience, listed in the beginning of the script. This is just so you won't have to change parameters a bunch of places in the code. Here I list the real processor parameter names though (and indicate within parentheses what the convenience variables are called).
+
+#### clustering
+`seed_threshold` (set for instance by `tagSeed`): cluster seeding threshold, in number of PE
+
+`clustering_threshold` (e.g. `tagClThr`): the minimum number of PE for a hit to even be considered in clustering (so this is a hard cut-off, in addition to the seeding threshold)
+
+`max_cluster_width` (as in `tagWidth`): the cluster width is how many hits in a row can be allowed to form a cluster. Can be set differently for the different pads. 
+
+`verbosity` (`clusteringVerbosity`): in the range from 0 to 3, it makes the clustering algorithm increasingly verbose (where 0 means, very quiet). 
+
+
+#### tracking
+`delta_max` (as in `maxDelta`): the maximum distance (in units of channel number) between the track seeding cluster and the clusters to consider in the other pads
+
+`verbosity` (`trackingVerbosity`): in the range from 0 to 3, it makes the tracking algorithm increasingly verbose (where 0 means, very quiet).
