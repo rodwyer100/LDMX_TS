@@ -52,7 +52,7 @@ Inside the script, you can also change the number of events generated, or if you
 
 
 ## Running clustering and tracking on a simulated file 
-ldmx fire runClusteringAndTracking.py [nElectrons] [input file] [output file]
+`ldmx fire runClusteringAndTracking.py [nElectrons] [input file] [output file]`
 
 Here the number of electrons is not really used for anything but some default naming stuff. So it might get removed. 
 You can for example use `test.root` as input file. You might need to change the pass name in 
