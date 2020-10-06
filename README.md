@@ -79,3 +79,13 @@ The example python script has a few variables of its own, for convenience, liste
 `output_collection` : set a name for the resulting track collection. Useful if you want to run several track producers in one go. Otherwise leave unset; the default is sensible. 
 
 `verbosity` (`trackingVerbosity`): in the range from 0 to 3, it makes the tracking algorithm increasingly verbose (where 0 means, very quiet).
+
+
+## simulation files to run over
+There is one, very small .root file that ships with this repo: `test.root`, that all example code assumes. It has 100 events, with hits, clusters, and tracks.
+
+A larger sample with sim-level and reco-level TS hits can be found at slac, here:
+
+`/nfs/slac/g/ldmx/users/lene/triggerScint/v2.2.1/`
+
+This is 1M events each, at multiplicities 1,...,4 incoming beam electrons. 
