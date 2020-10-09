@@ -81,7 +81,7 @@ The example python script has a few variables of its own, for convenience, liste
 `verbosity` (`trackingVerbosity`): in the range from 0 to 3, it makes the tracking algorithm increasingly verbose (where 0 means, very quiet).
 
 
-## simulation files to run over
+## Simulation files to run over
 There is one, very small .root file that ships with this repo: `test.root`, that all example code assumes. It has 100 events, with hits, clusters, and tracks.
 
 A larger sample with sim-level and reco-level TS hits can be found at slac, here:
@@ -89,3 +89,15 @@ A larger sample with sim-level and reco-level TS hits can be found at slac, here
 `/nfs/slac/g/ldmx/users/lene/triggerScint/v2.2.1/`
 
 This is 1M events each, at multiplicities 1,...,4 incoming beam electrons. 
+
+
+## Running a batch job with a singularity image at SLAC
+If you have a singularity image, running jobs with it is pretty easy. Just remember that also here, we need to mount any external directories for them to be accessible by the code inside the image. In this example, a data directory is mounted:
+
+`export dPath="/nfs/slac/g/ldmx/data/mc20/v12/4.0GeV/v2.2.1-2e"`
+
+`bsub -R "select[centos7]" -W 30  singularity run -B ${dPath}:${dPath} /path/to/my-singularity-image.sif . my-ldmx-sw-config.py  "${dPath}/my-infile-name.root" "my-outfile-name.root" `
+
+Here we choose the centos7 machines to avoid SLAC's rhel64 machines which have been acting up in the past (probably not needed with the singularity image though), specify a walltime with `-W [minutes]`, and `-B` is for bind (mount). 
+
+Remember that SLAC batch will happily start writing job output to wherever you're submitting from. So putting all this in a script using some scratch space etc is a nice idea.
