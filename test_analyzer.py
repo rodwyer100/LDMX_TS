@@ -2,10 +2,10 @@ from ts_digi_container import *
 import ROOT as r
 
 ## initialize container
-cont = ts_digi_container('test.root','LDMX_Events')
-cont.get_digi_collection('trigScintDigisTag_sim')
-cont.get_digi_collection('trigScintDigisUp_sim')
-cont.get_digi_collection('trigScintDigisDn_sim')
+cont = ts_digi_container('../ldmx-sw/three_electron_tracks_temp.root','LDMX_Events')
+cont.get_digi_collection('trigScintDigisTag_reco')
+cont.get_digi_collection('trigScintDigisUp_reco')
+cont.get_digi_collection('trigScintDigisDn_reco')
 
 cont.get_cluster_collection('TriggerPadTaggerClusters_digi')
 cont.get_track_collection('TriggerPadTracks_digi')
@@ -22,15 +22,15 @@ hBeamEfracTracks = r.TH1F("hBeamEfracTracks","beam fraction histo;Fraction of en
 ## loop over events
 for i in range(cont.tree.numentries):
     ## get list of pe for tagger array for event i
-    pes=cont.get_data('trigScintDigisTag_sim','pe',i)
+    pes=cont.get_data('trigScintDigisTag_reco','pe',i)
     for pe in pes : 
         hist.Fill(pe)
     ## get list of pe for upstream array for event i
-    pes=cont.get_data('trigScintDigisUp_sim','pe',i)
+    pes=cont.get_data('trigScintDigisUp_reco','pe',i)
     for pe in pes : 
         hist.Fill(pe)
     ## get list of pe for downstream array for event i
-    pes=cont.get_data('trigScintDigisDn_sim','pe',i)
+    pes=cont.get_data('trigScintDigisDn_reco','pe',i)
     for pe in pes : 
         hist.Fill(pe)
 
