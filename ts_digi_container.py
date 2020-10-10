@@ -100,7 +100,7 @@ class ts_digi_container:
     ## Get total energy as measured in the ecal
     ## this simply sums sim hits and doesn't include reconstruction efects
     def get_ecal_energy(self,event=-1,coll_name='EcalSimHits_sim'):
-        self.data.update(self.tree.arrays([coll_name='.edep_']),cache=self.cache)
+        self.data.update(self.tree.arrays([coll_name+'.edep_']),cache=self.cache)
         self.data['ecal_total_energy']=map(np.sum,self.data[coll_name+'.edep_'])
         if event<0 :
             return self.data['ecal_total_energy']
@@ -128,8 +128,8 @@ class ts_digi_container:
         if not coll_name+'.second.y_' in self.data:
             self.data.update(self.tree.arrays([coll_name+'.second.genStatus_',coll_name+'.second.pdgID_',coll_name+'.second.y_'],cache=self.cache))
             self.data['beam_electron'] = (self.data[coll_name+'.second.genStatus_']==1)*(self.data[coll_name+'.second.pdgID_']==11)
-        self.data['beam_ypos']=self.data[coll_name'.second.y_'][self.data['beam_electron']]
-        self.data['beam_barID']=np.divide(np.subtract(self.data[coll_name'.second.y_'][self.data['beam_electron']],-39.6),1.65)
+        self.data['beam_ypos']=self.data[coll_name+'.second.y_'][self.data['beam_electron']]
+        self.data['beam_barID']=np.divide(np.subtract(self.data[coll_name+'.second.y_'][self.data['beam_electron']],-39.6),1.65)
         if event<0 : 
             return self.data['beam_barID']
         if event>=self.tree.numentries :
