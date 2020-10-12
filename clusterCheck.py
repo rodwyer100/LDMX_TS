@@ -121,7 +121,7 @@ Tracks.SetLineWidth(3)
 Tracks.SetFillColor(4)
 Tracks.Draw()
 c1.SaveAs(Tracks.GetName()+".png")
-
+c1.SetRightMargin(0.15)
 
 hist.SetTitle("Tagger")
 hist.Draw("colz,text")

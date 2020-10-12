@@ -19,10 +19,13 @@ hist = r.TH1F("test","Title;Photo-electrons;Events",40,0,200)
 hBeamEfrac = r.TH1F("hBeamEfrac","beam fraction histo;Fraction of energy deposited by beam electrons;Clusters",101,0,1.01)
 hBeamEfracTracks = r.TH1F("hBeamEfracTracks","beam fraction histo;Fraction of energy deposited by beam electrons;Tracks",101,0,1.01)
 
+print("n",cont.tree.numentries)
 ## loop over events
 for i in range(cont.tree.numentries):
     ## get list of pe for tagger array for event i
     pes=cont.get_data('trigScintDigisTag_sim','pe',i)
+    ids = cont.get_data("trigScintDigisTag_sim","barID",i)
+    print(zip(pes,ids))
     for pe in pes : 
         hist.Fill(pe)
     ## get list of pe for upstream array for event i
