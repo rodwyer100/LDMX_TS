@@ -47,3 +47,57 @@ Run it (after sourcing the env script as indicated above, if you're in a fresh s
 
 The first argument is mandatory.
 Inside the script, you can also change the number of events generated, or if you want to use a fix electron multiplicity per event (default and easiest) or if it should be varied according to a Poisson distribution around the number you specified. Be mindful that a large number of events/electron multiplicity both lead to longer simulation time and larger output files. 
+
+
+
+
+## Running clustering and tracking on a simulated file 
+`ldmx fire runClusteringAndTracking.py [nElectrons] [input file] [output file]`
+
+Here the number of electrons is not really used for anything but some default naming stuff. So it might get removed. 
+You can for example use `test.root` as input file. You might need to change the pass name in  `p=ldmxcfg.Process("digi")` to something else than "digi", if this pass already exists.
+
+
+### parameters in clustering and tracking
+The example python script has a few variables of its own, for convenience, listed in the beginning of the script. This is just so you won't have to change parameters a bunch of places in the code. Here I list the real processor parameter names though (and indicate within parentheses what the convenience variables are called).
+
+#### clustering: can be different for each pad
+`seed_threshold` (set for instance by `tagSeed`): cluster seeding threshold, in number of PE
+
+`clustering_threshold` (e.g. `tagClThr`): the minimum number of PE for a hit to even be considered in clustering (so this is a hard cut-off, in addition to the seeding threshold)
+
+`max_cluster_width` (as in `tagWidth`): the cluster width is how many hits in a row can be allowed to form a cluster. Can be set differently for the different pads. 
+
+`output_collection` : this is already set to distinguish tag, up, down, in the predefined function calls. But if several parameter settings are desired in one go, different output collection names should be set.
+
+`verbosity` (`clusteringVerbosity`): in the range from 0 to 3, it makes the clustering algorithm increasingly verbose (where 0 means, very quiet). 
+
+
+#### tracking: one per track collection
+`delta_max` (as in `maxDelta`): the maximum distance (in units of channel number) between the track seeding cluster and the clusters to consider in the other pads
+
+`output_collection` : set a name for the resulting track collection. Useful if you want to run several track producers in one go. Otherwise leave unset; the default is sensible. 
+
+`verbosity` (`trackingVerbosity`): in the range from 0 to 3, it makes the tracking algorithm increasingly verbose (where 0 means, very quiet).
+
+
+## Simulation files to run over
+There is one, very small .root file that ships with this repo: `test.root`, that all example code assumes. It has 100 events, with hits, clusters, and tracks.
+
+A larger sample with sim-level and reco-level TS hits can be found at slac, here:
+
+`/nfs/slac/g/ldmx/users/lene/triggerScint/v2.2.1/`
+
+This is 1M events each, at multiplicities 1,...,4 incoming beam electrons. 
+
+
+## Running a batch job with a singularity image at SLAC
+If you have a singularity image, running jobs with it is pretty easy. Just remember that also here, we need to mount any external directories for them to be accessible by the code inside the image. In this example, a data directory is mounted:
+
+`export dPath="/nfs/slac/g/ldmx/data/mc20/v12/4.0GeV/v2.2.1-2e"`
+
+`bsub -R "select[centos7]" -W 30  singularity run -B ${dPath}:${dPath} /path/to/my-singularity-image.sif . my-ldmx-sw-config.py  "${dPath}/my-infile-name.root" "my-outfile-name.root" `
+
+Here we choose the centos7 machines to avoid SLAC's rhel64 machines which have been acting up in the past (probably not needed with the singularity image though), specify a walltime with `-W [minutes]`, and `-B` is for bind (mount). 
+
+Remember that SLAC batch will happily start writing job output to wherever you're submitting from. So putting all this in a script using some scratch space etc is a nice idea.
