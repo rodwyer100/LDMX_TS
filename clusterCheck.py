@@ -2,10 +2,13 @@ from ts_digi_container import *
 import ROOT as r
 
 ## initialize container
-cont = ts_digi_container('test.root','LDMX_Events')
-cont.get_digi_collection('trigScintDigisTag_sim')
-cont.get_digi_collection('trigScintDigisUp_sim')
-cont.get_digi_collection('trigScintDigisDn_sim')
+cont = ts_digi_container('~whitbeck/raid/LDMX/v2.2.1/four_electron_tracks.root','LDMX_Events')
+
+
+cont.get_digi_collection('trigScintDigisTag_reco')
+cont.get_digi_collection('trigScintDigisUp_reco')
+cont.get_digi_collection('trigScintDigisDn_reco')
+
 
 cont.get_cluster_collection('TriggerPadTaggerClusters_digi')
 cont.get_cluster_collection('TriggerPadUpClusters_digi')
@@ -34,22 +37,21 @@ clushist = r.TH2F("TaggerCluster","TaggerCluster;Number of Clusters;Tracks",8,-0
 clushist2 = r.TH2F("UpstreamCluster","UpstreamCluster;Number of Clusters;Tracks",8,-0.5,7.5,8,-0.5,7.5)
 clushist3 = r.TH2F("DownstreamCluster","TaggerCluster;Number of Clusters;Tracks",8,-0.5,7.5,8,-0.5,7.5)
 ## loop over events
-for i in range(cont.tree.numentries):
+for i in range(cont.tree.numentries -1):
     ## get list of pe for tagger array for event i
-    pesTag=cont.get_data('trigScintDigisTag_sim','pe',i)
+    pesTag=cont.get_data('trigScintDigisTag_reco','pe',i)
     NpeTag = sum(map(lambda x: x> 50, pesTag)) 
-    ids = cont.get_data("trigScintDigisTag_sim","barID",i)
     clusterTag = cont.get_data("TriggerPadTaggerClusters_digi","centroid",i)
     PeTag.Fill(NpeTag)
     clusters.Fill(len(clusterTag))
     ## get list of pe for upstream array for event i
-    pesUp = cont.get_data('trigScintDigisUp_sim','pe',i)
+    pesUp = cont.get_data('trigScintDigisUp_reco','pe',i)
     clusterUp = cont.get_data("TriggerPadUpClusters_digi","centroid",i)
     NpeUp = sum(map(lambda x: x> 50, pesUp)) 
     PeUp.Fill(NpeUp)
     clustersUp.Fill(len(clusterUp))
     ## get list of pe for downstream array for event i
-    pesDn = cont.get_data('trigScintDigisDn_sim','pe',i)
+    pesDn = cont.get_data('trigScintDigisDn_reco','pe',i)
     clusterDn = cont.get_data("TriggerPadDownClusters_digi","centroid",i)
     NpeDn = sum(map(lambda x: x> 50, pesDn))     
     PeDn.Fill(NpeDn)
