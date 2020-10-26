@@ -2,7 +2,7 @@ from ts_digi_container import *
 import ROOT as r
 
 ## initialize container
-cont = ts_digi_container('../ldmx-sw/three_electron_tracks_temp.root','LDMX_Events')
+cont = ts_digi_container('~whitbeck/raid/LDMX/v2.2.1/three_electron_tracks.root','LDMX_Events')
 cont.get_digi_collection('trigScintDigisTag_reco')
 cont.get_digi_collection('trigScintDigisUp_reco')
 cont.get_digi_collection('trigScintDigisDn_reco')
@@ -19,8 +19,9 @@ hist = r.TH1F("test","Title;Photo-electrons;Events",40,0,200)
 hBeamEfrac = r.TH1F("hBeamEfrac","beam fraction histo;Fraction of energy deposited by beam electrons;Clusters",101,0,1.01)
 hBeamEfracTracks = r.TH1F("hBeamEfracTracks","beam fraction histo;Fraction of energy deposited by beam electrons;Tracks",101,0,1.01)
 
+print("n",cont.tree.numentries)
 ## loop over events
-for i in range(cont.tree.numentries):
+for i in range(cont.tree.numentries-1):
     ## get list of pe for tagger array for event i
     pes=cont.get_data('trigScintDigisTag_reco','pe',i)
     for pe in pes : 
