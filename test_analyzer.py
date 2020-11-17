@@ -14,11 +14,12 @@ def main(options,args) :
 
     inFile=str(options.inFile)
     passName=str(options.passName)
+    modules = ['trigScintDigisTag', 'trigScintDigisUp', 'trigScintDigisDn']
+
     ## initialize container
     cont = ts_digi_container(inFile,'LDMX_Events')
-    cont.get_digi_collection('trigScintDigisTag_'+passName)
-    cont.get_digi_collection('trigScintDigisUp_'+passName)
-    cont.get_digi_collection('trigScintDigisDn_'+passName)
+    for collection in modules :
+        cont.get_digi_collection(collection+'_'+passName)
     
     cont.get_cluster_collection('TriggerPadTaggerClusters_digi')
     cont.get_track_collection('TriggerPadTracks_digi')
@@ -34,23 +35,16 @@ def main(options,args) :
     
     ## loop over events
     for i in range(cont.tree.numentries):
-        ## get list of pe for tagger array for event i
-        pes=cont.get_data('trigScintDigisTag_'+passName,'pe',i)
-        for pe in pes : 
-            hist.Fill(pe)
-            ## get list of pe for upstream array for event i
-            pes=cont.get_data('trigScintDigisUp_'+passName,'pe',i)
-        for pe in pes : 
-            hist.Fill(pe)
-            ## get list of pe for downstream array for event i
-        pes=cont.get_data('trigScintDigisDn_'+passName,'pe',i)
-        for pe in pes : 
-            hist.Fill(pe)
-                
+        ## get list of pe for every array for event i
+        for collection in modules :
+            pes=cont.get_data(collection+'_'+passName,'pe',i)
+            for pe in pes : 
+                hist.Fill(pe)
+ 
         beamFracC=cont.get_data('TriggerPadTaggerClusters_digi', 'beamEfrac',i)
         for frac in beamFracC : 
             hBeamEfrac.Fill(frac)
-            beamFracT=cont.get_data('TriggerPadTracks_digi', 'beamEfrac',i)
+        beamFracT=cont.get_data('TriggerPadTracks_digi', 'beamEfrac',i)
         for frac in beamFracT : 
             hBeamEfracTracks.Fill(frac)
 
