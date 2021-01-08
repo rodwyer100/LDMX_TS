@@ -2,10 +2,6 @@
 from ts_digi_container import *
 import ROOT as r
 
-#import argparse
-#import importlib
-#import re
-
 import sys
 from optparse import OptionParser
 
