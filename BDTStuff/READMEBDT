@@ -143,3 +143,41 @@ Step 6: Open the resulting select.root file on TBrowser. The effect of BDT selec
 To see how the number of tracks observed changes, change "{yourval}"
 
 ##########################################################################################################################################
+
+RUNNING VARIOUS ANALYSIS Cutting/Visualization CODE
+
+  Running ROCcurves.C:
+  Step 1: Change the myFile instantiation in ROCcurves.C from slacback4.root to oneandthreeback.root and slacsig4.root to the equivalent oneandthre...
+  Now run it as usual
+  
+  root
+  *root browser opens*
+  .x ROCcurves.C
+  
+  Step 2: Copy down the output of ROCcurves into a textfile called "scratchoneandthree.txt"
+  
+  Step 3: Change "scratchgrapher.py" to where it only reads in one file into one array ax,ay (just involves delection of other arrays)
+  the name of that file should be "scratchoneandthree.txt"
+  
+  These instructions should generate the ROC curve for oneandthree electron events. You can alternatively do the last process for a different namelist (i.e. train only on two electron
+  events for instance). The original python file included ran the BDT trainer independently on each of the n electron events by thems selves, and it currently configured to draw ROC
+  curves for all of them to compare, but that was a a couple steps ahead of what I thought was appropriatte to include in depth here.
+  
+  Running 2DCutEllipse
+  
+  Do the first step of the last sequence exchanging .x ROCcurves.C to .x 2DEllipse.C. This will give you a single number because the cut was a single cut corresponding to a complicated picture
+  included in a presentation I gave. Please email me if you want more info, but I don't think this particular graph is too important.
+  
+  Running BDTValueDiscern.C
+  
+  Step1: Open the fule and change cutval to the BDT value you want to set (and find where it corresponds to on the ROC curve). This is a rinky dinky way to do it, but it works if you are patient enough
+  to try enough values. You will also need to change myFile3 and myFile3 names to the appropriate signal and backgroudn files
+  
+  Step2: Run it
+  
+  root
+  *root browser opens*
+  .x BDTValueDiscern.C
+  
+  You will get an output corresponding to the BadRate (i.e. number of bad events over good events) and "LeftOverGood" (number of good events not selected out by the cut).
+  
