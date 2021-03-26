@@ -10,8 +10,12 @@ the filechanger/markitdownfiles. Furthermore it will also talk to runSimAndDigi 
 so wherever one of those files is mentioned you may check for issues there. I think its the case that runner.sh has some obsolete logging being done,
 and thats the main difference.
 
-input:
-output:
+(runner.sh)
+input:N/A
+output:copyitdownFORREALDay3.txt
+(runner2.sh)
+input:N/A
+output:logFile4.txt
 
 filechanger2.py
 
@@ -19,8 +23,10 @@ This file automatically changes the parameters of the detector in ldmx/Detector/
 function can run over all the possible values of detector geometries. Certain columns of the gdml file are changed by adding to runner.sh the first
 number 35,36,etc corresponding to the line number of the constant, and then the value which corresponds to the value desired.
 
-input:
-output:
+input:N/A
+output:N/A
+(Does things internally; internally it takes parameters from runner2.sh and changes gdml files in ldmx-sw)
+
 
 ThrowAway.py
 
@@ -28,28 +34,30 @@ Takes information from logFile.txt and from runner2.sh (more specifically when r
 to plot some metric like the number of overcounting events over total events vs detector geometries. Again exhaustive searches became obsolete, 
 but is all here if you want to play with it.
 
-input:
-output:
+input:logFile.txt
+output:N/A (an image)
 
 ALOT OF THE FOLLOWING FILES ARE NOT IMPLMENTED IN RUNNER.SH (SOMETIMES BECAUSE THEY ARE OBSOLETE). 
 I have included them in case you find a use for the obsolte functions. They are mainly the obsolete logging mentioned the description of runner.sh (NOT runner2.sh)
 ##########################################################################################
 
-filechanger1.py
+filechanger.py
 
 Not currently implemented anywhere, but the first instance of automatic gdml changing. filechanger2 was created to more generally allow the
 changing of any number of constants.
 
-input:
-output:
+input:N/A
+output:N/A
+(Does things internally; inside it takes again constants and changes the gdml files)
 
 filechanger3.py
 
 Obsolete file. Logs the second value j of the constant gdml file (I believe its scintillator bar width). Included so that the file will run hopefully 
-without extra modifications necessary.
+without extra modifications necessary (it may need to be enabled to keep track of parameters if you don't do that yourself).
 
-input:
-output:
+input:N/A
+output:N/A
+(Does things internally; inside it takes parameters and changes logFile.txt (supposed to be logFile4.txt like filechanger2.py
 
 markitdown.py
 
@@ -73,8 +81,8 @@ test_analyzer.py
 
 Obsolete file used for analysis in runner.sh. Did not itself calculate confusion matrix elements. It rather plotted every event and the number of tracks found therein
 
-input:
-output:
+input:autorunout.root
+output:copyitdownFORREALDay3.txt
 
 test_analyzer2.py
 
@@ -82,8 +90,9 @@ Used in tandem with runner2.sh to fund confusion matrices for a particular geome
 case you wanted to focus on promising geometries instead of an exhaustive search approach. Generated confusion matrix entries for a particular num of electron
 and logged it in logFile.txt
 
+input:autorunout.root
+output:logFile4.txt
+
 Note I originally included runSimAndDigi and runTrackingAndClustering in the modifications of LDMX_TS Software, but they weren't modified to any true extent.
 The above analysis (and the special case analysis) can be performed using the old LDMX_TS software and the new version of test_analyzer2.py.
 
-input:
-output:
